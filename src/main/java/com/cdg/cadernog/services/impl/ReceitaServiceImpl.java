@@ -41,6 +41,8 @@ public class ReceitaServiceImpl implements ReceitaService{
     public ReceitaDto save(ReceitaDto receitaDto) {
         Receita newReceita = new Receita();
         BeanUtils.copyProperties(receitaDto, newReceita);
+        newReceita.setCategoria(receitaDto.getCategoriaDeReceita());
+        newReceita.setFormaDePagamento(receitaDto.getFormaDePagamento());
         newReceita.setCreated_at(Instant.now());
 
         newReceita = receitaRepository.save(newReceita);
@@ -55,6 +57,8 @@ public class ReceitaServiceImpl implements ReceitaService{
         BeanUtils.copyProperties(receitaDto, receita);
 
         receita.setId(id);
+        receita.setCategoria(receitaDto.getCategoriaDeReceita());
+        receita.setFormaDePagamento(receitaDto.getFormaDePagamento());
         receita.setCreated_at(created_at);
         receita.setUpdated_at(Instant.now());
 

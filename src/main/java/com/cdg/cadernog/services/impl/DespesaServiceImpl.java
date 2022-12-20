@@ -41,6 +41,8 @@ public class DespesaServiceImpl implements DespesaService {
     public DespesaDto save(DespesaDto despesaDto) {
         Despesa newDespesa = new Despesa();
         BeanUtils.copyProperties(despesaDto, newDespesa);
+        newDespesa.setCategoria(despesaDto.getCategoriaDeDespesa());
+        newDespesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
         newDespesa.setCreated_at(Instant.now());
 
         newDespesa = despesaRepository.save(newDespesa);
@@ -55,6 +57,8 @@ public class DespesaServiceImpl implements DespesaService {
         BeanUtils.copyProperties(despesaDto, despesa);
 
         despesa.setId(id);
+        despesa.setCategoria(despesaDto.getCategoriaDeDespesa());
+        despesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
         despesa.setCreated_at(created_at);
         despesa.setUpdated_at(Instant.now());
 
@@ -67,5 +71,4 @@ public class DespesaServiceImpl implements DespesaService {
         Despesa despesa = despesaRepository.findById(id).get();
         despesaRepository.delete(despesa);
     }
-
 }

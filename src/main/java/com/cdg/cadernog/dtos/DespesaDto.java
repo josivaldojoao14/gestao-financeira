@@ -18,6 +18,8 @@ public class DespesaDto {
     private String title;
     private String description;
     private float value;
+    private String categoriaDeDespesa;
+    private String formaDePagamento;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'", timezone = "GMT-3")
     private Instant created_at;
@@ -33,5 +35,7 @@ public class DespesaDto {
         value = obj.getValue();
         created_at = obj.getCreated_at();
         updated_at = obj.getUpdated_at();
+        categoriaDeDespesa = obj.getCategoria();
+        formaDePagamento = obj.getFormaDePagamento();
     }
 }

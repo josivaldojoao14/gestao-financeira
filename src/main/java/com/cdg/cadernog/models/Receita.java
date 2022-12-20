@@ -3,6 +3,8 @@ package com.cdg.cadernog.models;
 import java.time.Instant;
 
 import com.cdg.cadernog.dtos.ReceitaDto;
+import com.cdg.cadernog.enums.CategoriasReceita;
+import com.cdg.cadernog.enums.FormasDePagamento;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,12 @@ public class Receita{
     @Column(name = "valor")
     private float value;
 
+    @Column(name = "categoria")
+    private CategoriasReceita categoria;
+
+    @Column(name = "forma_de_pagamento")
+    private FormasDePagamento formaDePagamento;
+
     // dto to model
     public Receita(ReceitaDto obj){
         id = obj.getId();
@@ -46,5 +54,23 @@ public class Receita{
         value = obj.getValue();
         created_at = obj.getCreated_at();
         updated_at = obj.getUpdated_at();
+        categoria = CategoriasReceita.valueOf(obj.getCategoriaDeReceita());
+        formaDePagamento = FormasDePagamento.valueOf(obj.getFormaDePagamento());
+    }
+
+    public String getCategoria() {
+        return this.categoria.toString();
+    }
+
+    public void setCategoria(String cat) {
+        this.categoria = CategoriasReceita.valueOf(cat);
+    }
+
+    public String getFormaDePagamento() {
+        return this.formaDePagamento.toString();
+    }
+
+    public void setFormaDePagamento(String pag) {
+        this.formaDePagamento = FormasDePagamento.valueOf(pag);
     }
 }
