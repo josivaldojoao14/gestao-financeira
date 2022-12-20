@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.ReceitaDto;
+import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Receita;
 import com.cdg.cadernog.repositories.ReceitaRepository;
 import com.cdg.cadernog.services.interfaces.ReceitaService;
@@ -71,4 +73,18 @@ public class ReceitaServiceImpl implements ReceitaService{
         Receita receita = receitaRepository.findById(id).get();
         receitaRepository.delete(receita);
     }
+
+    @Override
+    public SituacaoMensalDto sumByPeriod(int month, int year) {
+        float totalReceitaMensal = receitaRepository.sumByPeriod(month, year);
+        return new SituacaoMensalDto("Receita", month, year, totalReceitaMensal);
+    }
+
+    @Override
+    public List<ListagemDaSituacaoDto> findAllCategorized() {
+        List<Receita> receitas = receitaRepository.findAll();
+        List<ListagemDaSituacaoDto> listagem = receitas.stream().map(x -> new ListagemDaSituacaoDto(x)).collect(Collectors.toList());
+        return listagem;
+    }
+
 }

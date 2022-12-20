@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.ReceitaDto;
+import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.services.impl.ReceitaServiceImpl;
 
 @RestController
@@ -51,5 +53,17 @@ public class ReceitaController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         receitaServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/{month}/{year}")
+    public ResponseEntity<?> sumByPeriod(@PathVariable int month, @PathVariable int year) {
+        SituacaoMensalDto situacaoReceita = receitaServiceImpl.sumByPeriod(month, year);
+        return ResponseEntity.ok().body(situacaoReceita);
+    }
+
+    @GetMapping(value = "/categorized")
+    public ResponseEntity<List<?>> getAllCategorized() {
+        List<ListagemDaSituacaoDto> listagem = receitaServiceImpl.findAllCategorized();
+        return ResponseEntity.ok().body(listagem);
     }
 }

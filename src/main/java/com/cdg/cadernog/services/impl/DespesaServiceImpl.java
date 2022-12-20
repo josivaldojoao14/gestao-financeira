@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdg.cadernog.dtos.DespesaDto;
+import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
+import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Despesa;
 import com.cdg.cadernog.repositories.DespesaRepository;
 import com.cdg.cadernog.services.interfaces.DespesaService;
@@ -70,5 +72,18 @@ public class DespesaServiceImpl implements DespesaService {
     public void deleteById(long id) {
         Despesa despesa = despesaRepository.findById(id).get();
         despesaRepository.delete(despesa);
+    }
+
+    @Override
+    public SituacaoMensalDto sumByPeriod(int month, int year) {
+        float totalDespesaMensal = despesaRepository.sumByPeriod(month, year);
+        return new SituacaoMensalDto("Despesa", month, year, totalDespesaMensal);
+    }
+
+    @Override
+    public List<ListagemDaSituacaoDto> findAllCategorized() {
+        List<Despesa> despesas = despesaRepository.findAll();
+        List<ListagemDaSituacaoDto> listagem = despesas.stream().map(x -> new ListagemDaSituacaoDto(x)).collect(Collectors.toList());
+        return listagem;
     }
 }
