@@ -13,6 +13,7 @@ import com.cdg.cadernog.dtos.ReceitaDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Receita;
 import com.cdg.cadernog.repositories.ReceitaRepository;
+import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.ReceitaService;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import lombok.AllArgsConstructor;
 @Service
 @Transactional
 @AllArgsConstructor
-public class ReceitaServiceImpl implements ReceitaService{
+public class ReceitaServiceImpl implements ReceitaService {
 
     @Autowired
     private final ReceitaRepository receitaRepository;
@@ -34,51 +35,62 @@ public class ReceitaServiceImpl implements ReceitaService{
 
     @Override
     public ReceitaDto findById(long id) {
-        Receita receita = receitaRepository.findById(id).get();
+        Receita receita = receitaRepository.findById(id)
+            .orElseThrow(() -> new ObjectNotFoundException("Nenhuma receita encontrada"));
         return new ReceitaDto(receita);
     }
 
     @Override
     public ReceitaDto save(ReceitaDto receitaDto) {
-        Receita newReceita = new Receita();
+        String dep = receitaDto.getCategoriaDeReceita();
+        String pag = receitaDto.getFormaDePagamento();
 
-        BeanUtils.copyProperties(receitaDto, newReceita);
-        
-        newReceita.setCategoria(receitaDto.getCategoriaDeReceita());
-        newReceita.setFormaDePagamento(receitaDto.getFormaDePagamento());
-        newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
+        if (dep.isEmpty() || pag.isEmpty()) {
+            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
+        } else {
+            Receita newReceita = new Receita();
+            BeanUtils.copyProperties(receitaDto, newReceita);
+            newReceita.setCategoria(dep);
+            newReceita.setFormaDePagamento(pag);
+            newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
 
-        newReceita = receitaRepository.save(newReceita);
-        return new ReceitaDto(newReceita);
+            newReceita = receitaRepository.save(newReceita);
+            return new ReceitaDto(newReceita);
+        }
     }
 
     @Override
     public ReceitaDto update(long id, ReceitaDto receitaDto) {
-        Receita receita = receitaRepository.findById(id).get();
+        String dep = receitaDto.getCategoriaDeReceita();
+        String pag = receitaDto.getFormaDePagamento();
 
-        BeanUtils.copyProperties(receitaDto, receita);
+        if (dep.isEmpty() || pag.isEmpty()) {
+            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
+        } else {
+            ReceitaDto receita = findById(id);
+            Receita receitaToUpdate = new Receita(receita);
+            BeanUtils.copyProperties(receitaDto, receitaToUpdate);
 
-        receita.setId(id);
-        receita.setCategoria(receitaDto.getCategoriaDeReceita());
-        receita.setFormaDePagamento(receitaDto.getFormaDePagamento());
-        receita.setUpdated_at(Instant.now());
+            receitaToUpdate.setId(id);
+            receitaToUpdate.setCategoria(dep);
+            receitaToUpdate.setFormaDePagamento(pag);
+            receitaToUpdate.setUpdated_at(Instant.now());
 
-        receita = receitaRepository.save(receita);
-        return new ReceitaDto(receita);
+            receitaToUpdate = receitaRepository.save(receitaToUpdate);
+            return new ReceitaDto(receitaToUpdate);
+        }
     }
 
     @Override
     public void deleteById(long id) {
-        Receita receita = receitaRepository.findById(id).get();
-        receitaRepository.delete(receita);
+        ReceitaDto receita = findById(id);
+        receitaRepository.delete(new Receita(receita));
     }
 
     @Override
-    public List<SituacaoMensalDto> findAllCategorized() {
-        List<Receita> receitas = receitaRepository.findAll();
-        List<SituacaoMensalDto> listagem = receitas.stream()
-            .map(x -> new SituacaoMensalDto(x))
-            .collect(Collectors.toList());
-        return listagem;
+    public SituacaoMensalDto sumByPeriod(int year, int month) {
+        float total = receitaRepository.sumByPeriod(year, month);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Receita", total);
+        return situacao;
     }
 }

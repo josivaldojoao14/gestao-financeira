@@ -54,9 +54,9 @@ public class DespesaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/categorized")
-    public ResponseEntity<List<?>> getAllCategorized() {
-        List<SituacaoMensalDto> listagem = despesaServiceImpl.findAllCategorized();
-        return ResponseEntity.ok().body(listagem);
+    @GetMapping(value = "/{year}/{month}")
+    public ResponseEntity<?> sumByPeriod(@PathVariable int year, @PathVariable int month) {
+        SituacaoMensalDto total = despesaServiceImpl.sumByPeriod(year, month);
+        return ResponseEntity.ok().body(total);
     }
 }

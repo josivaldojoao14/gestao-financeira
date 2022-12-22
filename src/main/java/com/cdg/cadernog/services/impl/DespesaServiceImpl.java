@@ -13,6 +13,7 @@ import com.cdg.cadernog.dtos.DespesaDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Despesa;
 import com.cdg.cadernog.repositories.DespesaRepository;
+import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.DespesaService;
 
 import lombok.AllArgsConstructor;
@@ -34,51 +35,63 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Override
     public DespesaDto findById(long id) {
-        Despesa despesa = despesaRepository.findById(id).get();
+        Despesa despesa = despesaRepository.findById(id)
+            .orElseThrow(() -> new ObjectNotFoundException("Nenhuma despesa encontrada"));
         return new DespesaDto(despesa);
     }
 
     @Override
     public DespesaDto save(DespesaDto despesaDto) {
-        Despesa newDespesa = new Despesa();
-        BeanUtils.copyProperties(despesaDto, newDespesa);
+        String dep = despesaDto.getCategoriaDeDespesa();
+        String pag = despesaDto.getFormaDePagamento();
 
-        newDespesa.setCategoria(despesaDto.getCategoriaDeDespesa());
-        newDespesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
-        newDespesa.setCreated_at(Instant.parse(despesaDto.getCreated_at()));
+        if (dep.isEmpty() || pag.isEmpty()) {
+            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
+        } else {
+            Despesa newDespesa = new Despesa();
+            BeanUtils.copyProperties(despesaDto, newDespesa);
 
-        newDespesa = despesaRepository.save(newDespesa);
-        return new DespesaDto(newDespesa);
+            newDespesa.setCategoria(dep);
+            newDespesa.setFormaDePagamento(pag);
+            newDespesa.setCreated_at(Instant.parse(despesaDto.getCreated_at()));
+
+            newDespesa = despesaRepository.save(newDespesa);
+            return new DespesaDto(newDespesa);
+        }
     }
 
     @Override
     public DespesaDto update(long id, DespesaDto despesaDto) {
-        Despesa despesa = despesaRepository.findById(id).get();
-        BeanUtils.copyProperties(despesaDto, despesa);
+        String dep = despesaDto.getCategoriaDeDespesa();
+        String pag = despesaDto.getFormaDePagamento();
 
-        despesa.setId(id);
-        despesa.setCategoria(despesaDto.getCategoriaDeDespesa());
-        despesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
-        despesa.setUpdated_at(Instant.now());
+        if (dep.isEmpty() || pag.isEmpty()) {
+            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
+        } else {
+            DespesaDto despesa = findById(id);
+            Despesa despesaToUpdate = new Despesa(despesa);
+            BeanUtils.copyProperties(despesaDto, despesaToUpdate);
 
-        despesa = despesaRepository.save(despesa);
-        return new DespesaDto(despesa);
+            despesaToUpdate.setId(id);
+            despesaToUpdate.setCategoria(dep);
+            despesaToUpdate.setFormaDePagamento(pag);
+            despesaToUpdate.setUpdated_at(Instant.now());
+
+            despesaToUpdate = despesaRepository.save(despesaToUpdate);
+            return new DespesaDto(despesaToUpdate);
+        }  
     }
 
     @Override
     public void deleteById(long id) {
-        Despesa despesa = despesaRepository.findById(id).get();
-        despesaRepository.delete(despesa);
+        DespesaDto despesa = findById(id);
+        despesaRepository.delete(new Despesa(despesa));
     }
 
     @Override
-    public List<SituacaoMensalDto> findAllCategorized() {
-        List<Despesa> despesas = despesaRepository.findAll();
-        List<SituacaoMensalDto> listagem = despesas.stream()
-            .map(x -> new SituacaoMensalDto(x))
-            .collect(Collectors.toList());
-
-        return listagem;
+    public SituacaoMensalDto sumByPeriod(int year, int month) {
+        float total = despesaRepository.sumByPeriod(year, month);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Despesa", total);
+        return situacao;
     }
-    
 }

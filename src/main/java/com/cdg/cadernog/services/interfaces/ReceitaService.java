@@ -16,5 +16,5 @@ public interface ReceitaService {
 
     void deleteById(long id);
 
-    List<SituacaoMensalDto> findAllCategorized();
+    SituacaoMensalDto sumByPeriod(int year, int month);
 }

@@ -54,9 +54,9 @@ public class ReceitaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/categorized")
-    public ResponseEntity<List<?>> getAllCategorized() {
-        List<SituacaoMensalDto> listagem = receitaServiceImpl.findAllCategorized();
-        return ResponseEntity.ok().body(listagem);
+    @GetMapping(value = "/{year}/{month}")
+    public ResponseEntity<?> sumByPeriod(@PathVariable int year, @PathVariable int month) {
+        SituacaoMensalDto total = receitaServiceImpl.sumByPeriod(year, month);
+        return ResponseEntity.ok().body(total);
     }
 }
