@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdg.cadernog.dtos.DespesaDto;
-import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.services.impl.DespesaServiceImpl;
 
@@ -55,15 +54,9 @@ public class DespesaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/{month}/{year}")
-    public ResponseEntity<?> sumByPeriod(@PathVariable int month, @PathVariable int year) {
-        SituacaoMensalDto situacaoDespesa = despesaServiceImpl.sumByPeriod(month, year);
-        return ResponseEntity.ok().body(situacaoDespesa);
-    }
-
     @GetMapping(value = "/categorized")
     public ResponseEntity<List<?>> getAllCategorized() {
-        List<ListagemDaSituacaoDto> listagem = despesaServiceImpl.findAllCategorized();
+        List<SituacaoMensalDto> listagem = despesaServiceImpl.findAllCategorized();
         return ResponseEntity.ok().body(listagem);
     }
 }

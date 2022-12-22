@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdg.cadernog.dtos.DespesaDto;
-import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Despesa;
 import com.cdg.cadernog.repositories.DespesaRepository;
@@ -43,9 +42,10 @@ public class DespesaServiceImpl implements DespesaService {
     public DespesaDto save(DespesaDto despesaDto) {
         Despesa newDespesa = new Despesa();
         BeanUtils.copyProperties(despesaDto, newDespesa);
+
         newDespesa.setCategoria(despesaDto.getCategoriaDeDespesa());
         newDespesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
-        newDespesa.setCreated_at(Instant.now());
+        newDespesa.setCreated_at(Instant.parse(despesaDto.getCreated_at()));
 
         newDespesa = despesaRepository.save(newDespesa);
         return new DespesaDto(newDespesa);
@@ -54,14 +54,11 @@ public class DespesaServiceImpl implements DespesaService {
     @Override
     public DespesaDto update(long id, DespesaDto despesaDto) {
         Despesa despesa = despesaRepository.findById(id).get();
-        Instant created_at = despesa.getCreated_at();
-
         BeanUtils.copyProperties(despesaDto, despesa);
 
         despesa.setId(id);
         despesa.setCategoria(despesaDto.getCategoriaDeDespesa());
         despesa.setFormaDePagamento(despesaDto.getFormaDePagamento());
-        despesa.setCreated_at(created_at);
         despesa.setUpdated_at(Instant.now());
 
         despesa = despesaRepository.save(despesa);
@@ -75,15 +72,13 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public SituacaoMensalDto sumByPeriod(int month, int year) {
-        float totalDespesaMensal = despesaRepository.sumByPeriod(month, year);
-        return new SituacaoMensalDto("Despesa", month, year, totalDespesaMensal);
-    }
-
-    @Override
-    public List<ListagemDaSituacaoDto> findAllCategorized() {
+    public List<SituacaoMensalDto> findAllCategorized() {
         List<Despesa> despesas = despesaRepository.findAll();
-        List<ListagemDaSituacaoDto> listagem = despesas.stream().map(x -> new ListagemDaSituacaoDto(x)).collect(Collectors.toList());
+        List<SituacaoMensalDto> listagem = despesas.stream()
+            .map(x -> new SituacaoMensalDto(x))
+            .collect(Collectors.toList());
+
         return listagem;
     }
+    
 }

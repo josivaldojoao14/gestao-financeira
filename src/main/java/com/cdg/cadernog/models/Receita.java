@@ -47,17 +47,17 @@ public class Receita{
     private FormasDePagamento formaDePagamento;
 
     // dto to model
-    public Receita(ReceitaDto obj){
+    public Receita(ReceitaDto obj) {
         id = obj.getId();
         title = obj.getTitle();
         description = obj.getDescription();
         value = obj.getValue();
-        created_at = obj.getCreated_at();
+        created_at = Instant.parse(obj.getCreated_at());
         updated_at = obj.getUpdated_at();
         categoria = CategoriasReceita.valueOf(obj.getCategoriaDeReceita());
         formaDePagamento = FormasDePagamento.valueOf(obj.getFormaDePagamento());
     }
-
+    
     public String getCategoria() {
         return this.categoria.toString();
     }

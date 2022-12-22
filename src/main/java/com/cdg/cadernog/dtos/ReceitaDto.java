@@ -3,7 +3,6 @@ package com.cdg.cadernog.dtos;
 import java.time.Instant;
 
 import com.cdg.cadernog.models.Receita;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,19 +21,16 @@ public class ReceitaDto {
     private String categoriaDeReceita;
     private String formaDePagamento;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'", timezone = "GMT-3")
-    private Instant created_at;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'", timezone = "GMT-3")
+    private String created_at;
     private Instant updated_at;
 
     // model to dto
-    public ReceitaDto(Receita obj){
+    public ReceitaDto(Receita obj) {
         id = obj.getId();
         title = obj.getTitle();
         description = obj.getDescription();
         value = obj.getValue();
-        created_at = obj.getCreated_at();
+        created_at = obj.getCreated_at().toString();
         updated_at = obj.getUpdated_at();
         categoriaDeReceita = obj.getCategoria();
         formaDePagamento = obj.getFormaDePagamento();

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.ReceitaDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.models.Receita;
@@ -42,10 +41,12 @@ public class ReceitaServiceImpl implements ReceitaService{
     @Override
     public ReceitaDto save(ReceitaDto receitaDto) {
         Receita newReceita = new Receita();
+
         BeanUtils.copyProperties(receitaDto, newReceita);
+        
         newReceita.setCategoria(receitaDto.getCategoriaDeReceita());
         newReceita.setFormaDePagamento(receitaDto.getFormaDePagamento());
-        newReceita.setCreated_at(Instant.now());
+        newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
 
         newReceita = receitaRepository.save(newReceita);
         return new ReceitaDto(newReceita);
@@ -54,14 +55,12 @@ public class ReceitaServiceImpl implements ReceitaService{
     @Override
     public ReceitaDto update(long id, ReceitaDto receitaDto) {
         Receita receita = receitaRepository.findById(id).get();
-        Instant created_at = receita.getCreated_at();
 
         BeanUtils.copyProperties(receitaDto, receita);
 
         receita.setId(id);
         receita.setCategoria(receitaDto.getCategoriaDeReceita());
         receita.setFormaDePagamento(receitaDto.getFormaDePagamento());
-        receita.setCreated_at(created_at);
         receita.setUpdated_at(Instant.now());
 
         receita = receitaRepository.save(receita);
@@ -75,16 +74,11 @@ public class ReceitaServiceImpl implements ReceitaService{
     }
 
     @Override
-    public SituacaoMensalDto sumByPeriod(int month, int year) {
-        float totalReceitaMensal = receitaRepository.sumByPeriod(month, year);
-        return new SituacaoMensalDto("Receita", month, year, totalReceitaMensal);
-    }
-
-    @Override
-    public List<ListagemDaSituacaoDto> findAllCategorized() {
+    public List<SituacaoMensalDto> findAllCategorized() {
         List<Receita> receitas = receitaRepository.findAll();
-        List<ListagemDaSituacaoDto> listagem = receitas.stream().map(x -> new ListagemDaSituacaoDto(x)).collect(Collectors.toList());
+        List<SituacaoMensalDto> listagem = receitas.stream()
+            .map(x -> new SituacaoMensalDto(x))
+            .collect(Collectors.toList());
         return listagem;
     }
-
 }

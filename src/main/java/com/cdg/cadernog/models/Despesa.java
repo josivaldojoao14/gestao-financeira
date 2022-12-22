@@ -47,25 +47,25 @@ public class Despesa {
     private FormasDePagamento formaDePagamento;
 
     // dto to model
-    public Despesa(DespesaDto obj){
+    public Despesa(DespesaDto obj) {
         id = obj.getId();
         title = obj.getTitle();
         description = obj.getDescription();
         value = obj.getValue();
-        created_at = obj.getCreated_at();
+        created_at =  Instant.parse(obj.getCreated_at());
         updated_at = obj.getUpdated_at();
         categoria = CategoriasDespesa.valueOf(obj.getCategoriaDeDespesa());
         formaDePagamento = FormasDePagamento.valueOf(obj.getFormaDePagamento());
     }
 
-    public String getCategoria(){
+    public String getCategoria() {
         return this.categoria.toString();
     }
-    
+
     public void setCategoria(String cat) {
         this.categoria = CategoriasDespesa.valueOf(cat);
     }
-    
+
     public String getFormaDePagamento() {
         return this.formaDePagamento.toString();
     }

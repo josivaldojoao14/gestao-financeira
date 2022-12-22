@@ -3,7 +3,6 @@ package com.cdg.cadernog.services.interfaces;
 import java.util.List;
 
 import com.cdg.cadernog.dtos.DespesaDto;
-import com.cdg.cadernog.dtos.ListagemDaSituacaoDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
 
 public interface DespesaService {
@@ -17,6 +16,5 @@ public interface DespesaService {
 
     void deleteById(long id);
 
-    SituacaoMensalDto sumByPeriod(int month, int year);
-    List<ListagemDaSituacaoDto> findAllCategorized();
+    List<SituacaoMensalDto> findAllCategorized();
 }
