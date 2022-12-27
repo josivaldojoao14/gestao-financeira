@@ -5,7 +5,10 @@ import org.springframework.security.core.GrantedAuthority;
 import com.cdg.cadernog.dtos.RoleDto;
 import com.cdg.cadernog.enums.Cargos;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +25,9 @@ public class RoleModel implements GrantedAuthority{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(unique = true)
+    @Enumerated(EnumType.STRING)
     private Cargos name;
 
     public RoleModel(RoleDto obj) {
@@ -31,14 +37,14 @@ public class RoleModel implements GrantedAuthority{
     
     @Override
     public String getAuthority() {
-        return this.getCargo();
+        return this.getName();
     }
 
-    public String getCargo() {
+    public String getName() {
         return this.name.toString();
     }
 
-    public void setCargo(String cargo) {
+    public void setName(String cargo) {
         this.name = Cargos.valueOf(cargo);
     }
 

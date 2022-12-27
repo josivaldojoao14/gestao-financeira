@@ -19,4 +19,6 @@ public interface UserService {
 
     boolean existsByUsername(String username);
 
+    void addRoleToUser(String roleName, String username);
+
 }

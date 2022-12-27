@@ -13,8 +13,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cdg.cadernog.dtos.RoleDto;
 import com.cdg.cadernog.dtos.UserDto;
+import com.cdg.cadernog.enums.Cargos;
+import com.cdg.cadernog.models.RoleModel;
 import com.cdg.cadernog.models.UserModel;
+import com.cdg.cadernog.repositories.RoleRepository;
 import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.exceptions.UsernameAlreadyTakenException;
@@ -26,14 +30,17 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
+    @Autowired
     private final UserRepository userRepository;
-
+    @Autowired
+    private final RoleRepository roleRepository;
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
         super();
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -101,5 +108,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public boolean existsByUsername(String username) {
         boolean result = userRepository.existsByUsername(username);
         return result;
+    }
+
+    @Override
+    public void addRoleToUser(String roleName, String username) {
+       UserDto user = findByUsername(username);
+       RoleModel role = roleRepository.findByName(Cargos.valueOf(roleName)).get();
+
+       user.getRoles().add(new RoleDto(role));
+       userRepository.save(new UserModel(user));
     }   
 }

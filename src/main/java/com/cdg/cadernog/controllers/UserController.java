@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdg.cadernog.dtos.UserDto;
+import com.cdg.cadernog.form.AddRoleToUserForm;
 import com.cdg.cadernog.services.impl.UserServiceImpl;
 import com.cdg.cadernog.util.URL;
 
@@ -60,5 +61,12 @@ public class UserController {
         UserDto user = userServiceImpl.findByUsername(username);
         return ResponseEntity.ok().body(user);
     }
+
+    @PostMapping(value = "/addRoleToUser")
+    public ResponseEntity<?> addRoleToUser(@RequestBody AddRoleToUserForm form) {
+        userServiceImpl.addRoleToUser(form.getRoleName(), form.getUserName());
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

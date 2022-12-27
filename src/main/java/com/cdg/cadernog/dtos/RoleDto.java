@@ -15,6 +15,6 @@ public class RoleDto {
 
     public RoleDto(RoleModel obj) {
         id = obj.getId();
-        name = obj.getCargo();
+        name = obj.getName();
     }
 }
