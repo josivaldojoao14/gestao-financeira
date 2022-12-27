@@ -6,6 +6,9 @@ import com.cdg.cadernog.dtos.RoleDto;
 import com.cdg.cadernog.enums.Cargos;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +19,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoleModel implements GrantedAuthority{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private Cargos name;
 

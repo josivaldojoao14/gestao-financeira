@@ -17,4 +17,6 @@ public interface UserService {
 
     UserDto findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
 }

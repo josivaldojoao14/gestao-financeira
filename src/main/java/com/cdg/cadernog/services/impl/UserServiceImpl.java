@@ -1,11 +1,11 @@
 package com.cdg.cadernog.services.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +17,7 @@ import com.cdg.cadernog.dtos.UserDto;
 import com.cdg.cadernog.models.UserModel;
 import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
+import com.cdg.cadernog.services.exceptions.UsernameAlreadyTakenException;
 import com.cdg.cadernog.services.interfaces.UserService;
 
 import jakarta.transaction.Transactional;
@@ -25,12 +26,16 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
+    public UserServiceImpl(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+        super();
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,20 +60,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto save(UserDto userDto) {
-        UserModel user = new UserModel();
-        BeanUtils.copyProperties(userDto, user);
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        if(existsByUsername(userDto.getUsername()) == true){
+            throw new UsernameAlreadyTakenException("Esse usuário já existe");
+        } else {
+            UserModel user = new UserModel();
+            BeanUtils.copyProperties(userDto, user);
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        user = userRepository.save(user);
-        return new UserDto(user);
+            user = userRepository.save(user);
+            return new UserDto(user);
+        }
     }
 
     @Override
     public UserDto update(long id, UserDto userDto) {
         UserDto userRetrivied = findById(id);
-        UserModel userModel = new UserModel();
+        UserModel userModel = new UserModel(userRetrivied);
 
-        BeanUtils.copyProperties(userRetrivied, userModel);
+        BeanUtils.copyProperties(userDto, userModel);
+        userModel.setId(userRetrivied.getId());
         userModel.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userModel = userRepository.save(userModel);
 
@@ -83,8 +93,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto findByUsername(String username) {
-        Optional<UserModel> user = userRepository.findByUsername(username);
-        return new UserDto(user.get());
+        UserModel user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário nao encontrado"));
+        return new UserDto(user);
     }
-    
+
+    @Override
+    public boolean existsByUsername(String username) {
+        boolean result = userRepository.existsByUsername(username);
+        return result;
+    }   
 }

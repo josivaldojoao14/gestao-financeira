@@ -8,4 +8,5 @@ import com.cdg.cadernog.models.UserModel;
 
 public interface UserRepository extends JpaRepository<UserModel, Long>{
     Optional<UserModel> findByUsername(String username);
+    boolean existsByUsername(String username);
 }
