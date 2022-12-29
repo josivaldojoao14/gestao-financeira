@@ -1,7 +1,6 @@
 package com.cdg.cadernog.form;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddRoleToUserForm {
-    @JsonProperty(required = true)
+    @NotEmpty
     private String userName;
-
-    @JsonProperty(required = true)
+    @NotEmpty
     private String roleName;
 }

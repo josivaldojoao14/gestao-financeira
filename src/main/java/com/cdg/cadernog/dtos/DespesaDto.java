@@ -19,7 +19,6 @@ public class DespesaDto {
     private float value;
     private String categoriaDeDespesa;
     private String formaDePagamento;
-
     private String created_at;
     private Instant updated_at;
 

@@ -18,43 +18,43 @@ import com.cdg.cadernog.dtos.SituacaoMensalDto;
 import com.cdg.cadernog.services.impl.DespesaServiceImpl;
 
 @RestController
-@RequestMapping(value = "/despesas")
+@RequestMapping(value = "/caderno")
 public class DespesaController {
 
     @Autowired
     private DespesaServiceImpl despesaServiceImpl;
 
-    @GetMapping
+    @GetMapping(value = "/despesas")
     public ResponseEntity<List<?>> getAll() {
         List<DespesaDto> despesas = despesaServiceImpl.findAll();
         return ResponseEntity.ok().body(despesas);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/despesa/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         DespesaDto despesa = despesaServiceImpl.findById(id);
         return ResponseEntity.ok().body(despesa);
     }
     
-    @PostMapping
+    @PostMapping(value = "/despesa")
     public ResponseEntity<?> save(@RequestBody DespesaDto despesa) {
         DespesaDto newDespesa = despesaServiceImpl.save(despesa);
         return ResponseEntity.ok().body(newDespesa);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/despesa/{id}")
     public ResponseEntity<?> update(@RequestBody DespesaDto despesa, @PathVariable Long id) {
         DespesaDto newDespesa = despesaServiceImpl.update(id, despesa);
         return ResponseEntity.ok().body(newDespesa);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/despesa/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         despesaServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/{year}/{month}")
+    @GetMapping(value = "/despesa/{year}/{month}")
     public ResponseEntity<?> sumByPeriod(@PathVariable int year, @PathVariable int month) {
         SituacaoMensalDto total = despesaServiceImpl.sumByPeriod(year, month);
         return ResponseEntity.ok().body(total);

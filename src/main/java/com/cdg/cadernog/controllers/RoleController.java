@@ -17,36 +17,36 @@ import com.cdg.cadernog.dtos.RoleDto;
 import com.cdg.cadernog.services.impl.RoleServiceImpl;
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/caderno")
 public class RoleController {
     @Autowired
     private RoleServiceImpl roleServiceImpl;
 
-    @GetMapping
+    @GetMapping(value = "/roles")
     public ResponseEntity<List<?>> getAll() {
         List<RoleDto> roles = roleServiceImpl.findAll();
         return ResponseEntity.ok().body(roles);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/role/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         RoleDto role = roleServiceImpl.findById(id);
         return ResponseEntity.ok().body(role);
     }
 
-    @PostMapping
+    @PostMapping(value = "/role")
     public ResponseEntity<?> save(@RequestBody RoleDto role) {
         RoleDto newRole = roleServiceImpl.save(role);
         return ResponseEntity.ok().body(newRole);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/role/{id}")
     public ResponseEntity<?> update(@RequestBody RoleDto role, @PathVariable Long id) {
         RoleDto newRole = roleServiceImpl.update(id, role);
         return ResponseEntity.ok().body(newRole);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/role/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         roleServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();

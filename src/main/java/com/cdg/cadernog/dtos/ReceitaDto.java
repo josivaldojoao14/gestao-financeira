@@ -17,10 +17,8 @@ public class ReceitaDto {
     private String title;
     private String description;
     private float value;
-
     private String categoriaDeReceita;
     private String formaDePagamento;
-
     private String created_at;
     private Instant updated_at;
 
