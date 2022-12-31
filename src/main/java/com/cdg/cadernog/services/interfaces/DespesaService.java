@@ -16,5 +16,5 @@ public interface DespesaService {
 
     void deleteById(long id);
 
-    SituacaoMensalDto sumByPeriod(int year, int month);
+    // SituacaoMensalDto sumByPeriod(int year, int month);
 }

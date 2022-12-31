@@ -11,7 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cdg.cadernog.dtos.ReceitaDto;
 import com.cdg.cadernog.dtos.SituacaoMensalDto;
-import com.cdg.cadernog.models.Receita;
+import com.cdg.cadernog.enums.CategoriasReceita;
+import com.cdg.cadernog.enums.FormasDePagamento;
+import com.cdg.cadernog.models.FormaDePagamentoModel;
+import com.cdg.cadernog.models.ReceitaModel;
+import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
+import com.cdg.cadernog.repositories.CategoriaReceitaRepository;
+import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
 import com.cdg.cadernog.repositories.ReceitaRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.ReceitaService;
@@ -26,71 +32,84 @@ public class ReceitaServiceImpl implements ReceitaService {
     @Autowired
     private final ReceitaRepository receitaRepository;
 
+    @Autowired
+    private final CategoriaReceitaRepository categoriaReceitaRepository;
+
+    @Autowired
+    private final FormaDePagamentoRepository formaDePagamentoRepository;
+
     @Override
     public List<ReceitaDto> findAll() {
-        List<Receita> receitas = receitaRepository.findAll();
+        List<ReceitaModel> receitas = receitaRepository.findAll();
         List<ReceitaDto> receitasDto = receitas.stream().map(x -> new ReceitaDto(x)).collect(Collectors.toList());
         return receitasDto;
     }
 
     @Override
     public ReceitaDto findById(long id) {
-        Receita receita = receitaRepository.findById(id)
+        ReceitaModel receita = receitaRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException("Nenhuma receita encontrada"));
         return new ReceitaDto(receita);
     }
 
     @Override
     public ReceitaDto save(ReceitaDto receitaDto) {
-        String dep = receitaDto.getCategoriaDeReceita();
-        String pag = receitaDto.getFormaDePagamento();
+        FormaDePagamentoModel fpag = findPagamento(receitaDto);
+        CategoriaReceitaModel cat = findCategoria(receitaDto);
 
-        if (dep.isEmpty() || pag.isEmpty()) {
-            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
-        } else {
-            Receita newReceita = new Receita();
-            BeanUtils.copyProperties(receitaDto, newReceita);
-            newReceita.setCategoria(dep);
-            newReceita.setFormaDePagamento(pag);
-            newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
+        ReceitaModel newReceita = new ReceitaModel();
+        BeanUtils.copyProperties(receitaDto, newReceita);
 
-            newReceita = receitaRepository.save(newReceita);
-            return new ReceitaDto(newReceita);
-        }
+        newReceita.setCategoria(cat);
+        newReceita.setFormaDePagamento(fpag);
+        newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
+
+        newReceita = receitaRepository.save(newReceita);
+        return new ReceitaDto(newReceita);
     }
 
     @Override
     public ReceitaDto update(long id, ReceitaDto receitaDto) {
-        String dep = receitaDto.getCategoriaDeReceita();
-        String pag = receitaDto.getFormaDePagamento();
+        FormaDePagamentoModel fpag = findPagamento(receitaDto);
+        CategoriaReceitaModel cat = findCategoria(receitaDto);
 
-        if (dep.isEmpty() || pag.isEmpty()) {
-            throw new ObjectNotFoundException("Nenhuma categoria/forma de pagamento foi encontrada");
-        } else {
-            ReceitaDto receita = findById(id);
-            Receita receitaToUpdate = new Receita(receita);
-            BeanUtils.copyProperties(receitaDto, receitaToUpdate);
+        ReceitaDto receita = findById(id);
+        ReceitaModel receitaToUpdate = new ReceitaModel(receita);
+        BeanUtils.copyProperties(receitaDto, receitaToUpdate);
 
-            receitaToUpdate.setId(id);
-            receitaToUpdate.setCategoria(dep);
-            receitaToUpdate.setFormaDePagamento(pag);
-            receitaToUpdate.setUpdated_at(Instant.now());
+        receitaToUpdate.setId(id);
+        receitaToUpdate.setCategoria(cat);
+        receitaToUpdate.setFormaDePagamento(fpag);
+        receitaToUpdate.setUpdated_at(Instant.now());
 
-            receitaToUpdate = receitaRepository.save(receitaToUpdate);
-            return new ReceitaDto(receitaToUpdate);
-        }
+        receitaToUpdate = receitaRepository.save(receitaToUpdate);
+        return new ReceitaDto(receitaToUpdate);
     }
 
     @Override
     public void deleteById(long id) {
         ReceitaDto receita = findById(id);
-        receitaRepository.delete(new Receita(receita));
+        receitaRepository.delete(new ReceitaModel(receita));
     }
 
-    @Override
-    public SituacaoMensalDto sumByPeriod(int year, int month) {
-        float total = receitaRepository.sumByPeriod(year, month);
-        SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Receita", total);
-        return situacao;
+    // @Override
+    // public SituacaoMensalDto sumByPeriod(int year, int month) {
+    //     float total = receitaRepository.sumByPeriod(year, month);
+    //     SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Receita", total);
+    //     return situacao;
+    // }
+
+    private FormaDePagamentoModel findPagamento(ReceitaDto receitaDto) {
+        FormaDePagamentoModel fpag = formaDePagamentoRepository
+            .findByName(FormasDePagamento.valueOf(receitaDto.getFormaDePagamento()))
+            .orElseThrow(() -> new ObjectNotFoundException("Nenhuma forma de pagamento encontrada"));
+        return fpag;
+    }
+
+    private CategoriaReceitaModel findCategoria(ReceitaDto receitaDto) {
+        CategoriaReceitaModel cat = categoriaReceitaRepository
+            .findByName(CategoriasReceita.valueOf(receitaDto.getCategoriaDeReceita()))
+            .orElseThrow(() -> new ObjectNotFoundException("Nenhuma categoria de receita encontrada"));
+        return cat;
     }
 }

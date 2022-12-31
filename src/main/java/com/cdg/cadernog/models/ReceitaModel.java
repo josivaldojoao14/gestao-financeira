@@ -5,12 +5,14 @@ import java.time.Instant;
 import com.cdg.cadernog.dtos.ReceitaDto;
 import com.cdg.cadernog.enums.CategoriasReceita;
 import com.cdg.cadernog.enums.FormasDePagamento;
+import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "receitas")
-public class Receita {
+public class ReceitaModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,37 +44,23 @@ public class Receita {
     @Column(name = "valor")
     private float value;
 
-    @Column(name = "categoria")
-    private CategoriasReceita categoria;
+    //@Column(name = "categoria")
+    @ManyToOne
+    private CategoriaReceitaModel categoria;
 
-    @Column(name = "forma_de_pagamento")
-    private FormasDePagamento formaDePagamento;
+    //@Column(name = "forma_de_pagamento")
+    @ManyToOne
+    private FormaDePagamentoModel formaDePagamento;
 
     // dto to model
-    public Receita(ReceitaDto obj) {
+    public ReceitaModel(ReceitaDto obj) {
         id = obj.getId();
         title = obj.getTitle();
         description = obj.getDescription();
         value = obj.getValue();
         created_at = Instant.parse(obj.getCreated_at());
         updated_at = obj.getUpdated_at();
-        categoria = CategoriasReceita.valueOf(obj.getCategoriaDeReceita());
-        formaDePagamento = FormasDePagamento.valueOf(obj.getFormaDePagamento());
-    }
-
-    public String getCategoria() {
-        return this.categoria.toString();
-    }
-
-    public void setCategoria(String cat) {
-        this.categoria = CategoriasReceita.valueOf(cat);
-    }
-
-    public String getFormaDePagamento() {
-        return this.formaDePagamento.toString();
-    }
-
-    public void setFormaDePagamento(String pag) {
-        this.formaDePagamento = FormasDePagamento.valueOf(pag);
-    }
+        categoria = new CategoriaReceitaModel(null, CategoriasReceita.valueOf(obj.getCategoriaDeReceita()));
+        formaDePagamento = new FormaDePagamentoModel(null, FormasDePagamento.valueOf(obj.getFormaDePagamento()));
+    } 
 }

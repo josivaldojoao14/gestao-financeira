@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdg.cadernog.dtos.AuthResponseDto;
 import com.cdg.cadernog.dtos.UserDto;
-import com.cdg.cadernog.dtos.UserLoginDto;
+import com.cdg.cadernog.dtos.auth.AuthResponseDto;
+import com.cdg.cadernog.dtos.auth.UserLoginDto;
 import com.cdg.cadernog.form.AddRoleToUserForm;
 import com.cdg.cadernog.form.RolesToRevokeForm;
 import com.cdg.cadernog.security.JWTGenerator;

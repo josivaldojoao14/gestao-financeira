@@ -1,4 +1,4 @@
-package com.cdg.cadernog.dtos;
+package com.cdg.cadernog.dtos.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
