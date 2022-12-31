@@ -100,7 +100,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDto findByUsername(String username) {
-        UserModel user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário nao encontrado"));
+        UserModel user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Usuário nao encontrado"));
         return new UserDto(user);
     }
 
@@ -125,7 +126,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         UserDto user = findByUsername(username);
 
         for (String role : roleNames) {
-            RoleModel roleExist = roleRepository.findByName(Cargos.valueOf(role)).get();
+            RoleModel roleExist = roleRepository.findByName(Cargos.valueOf(role))
+                .orElseThrow(() -> new ObjectNotFoundException("Cargo nao encontrado"));
+                   
             user.getRoles().remove(new RoleDto(roleExist));
         }
         

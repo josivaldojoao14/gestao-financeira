@@ -22,11 +22,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cargos")
-public class RoleModel implements GrantedAuthority{
+public class RoleModel implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public class RoleModel implements GrantedAuthority{
         id = obj.getId();
         name = Cargos.valueOf(obj.getName());
     }
-    
+
     @Override
     public String getAuthority() {
         return this.getName();
