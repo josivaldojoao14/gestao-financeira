@@ -32,10 +32,12 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests()
-            .requestMatchers("/caderno/auth/user/**").permitAll()
-            .anyRequest().authenticated()
+            .antMatchers("/h2-console/**").permitAll()
+            .antMatchers("/caderno/auth/user/**").permitAll().anyRequest().authenticated()
             .and()
             .httpBasic();
+
+        http.headers().frameOptions().disable();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

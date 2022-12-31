@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,11 +23,13 @@ import com.cdg.cadernog.dtos.AuthResponseDto;
 import com.cdg.cadernog.dtos.UserDto;
 import com.cdg.cadernog.dtos.UserLoginDto;
 import com.cdg.cadernog.form.AddRoleToUserForm;
+import com.cdg.cadernog.form.RolesToRevokeForm;
 import com.cdg.cadernog.security.JWTGenerator;
 import com.cdg.cadernog.services.impl.UserServiceImpl;
 import com.cdg.cadernog.util.URL;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/caderno")
 public class UserController {
     @Autowired
@@ -79,14 +82,20 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping(value = "/user/revokeRoleFromUser")
+    public ResponseEntity<?> revokeRoleFromUser(@RequestBody RolesToRevokeForm form) {
+        userServiceImpl.revokeRoleFromUser(form.getRoleName(), form.getUserName());
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping(value = "/auth/user/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDto loginDto) {
+    public ResponseEntity<AuthResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginDto.getUsername(), 
-                loginDto.getPassword())
-            );
-            
+                userLoginDto.getUsername(),
+                userLoginDto.getPassword()
+            ));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
         return ResponseEntity.ok().body(new AuthResponseDto(token));

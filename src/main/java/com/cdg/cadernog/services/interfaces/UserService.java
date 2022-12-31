@@ -2,6 +2,7 @@ package com.cdg.cadernog.services.interfaces;
 
 import java.util.List;
 
+import com.cdg.cadernog.dtos.RoleDto;
 import com.cdg.cadernog.dtos.UserDto;
 
 public interface UserService {
@@ -20,5 +21,7 @@ public interface UserService {
     boolean existsByUsername(String username);
 
     void addRoleToUser(String roleName, String username);
+
+    void revokeRoleFromUser(List<RoleDto> roles, String username);
 
 }

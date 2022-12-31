@@ -24,7 +24,7 @@ import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.exceptions.UsernameAlreadyTakenException;
 import com.cdg.cadernog.services.interfaces.UserService;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
@@ -118,4 +118,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
        user.getRoles().add(new RoleDto(role));
        userRepository.save(new UserModel(user));
     }   
+
+    @Override
+    public void revokeRoleFromUser(List<RoleDto> roles, String username) {
+        List<String> roleNames = roles.stream().map(x -> x.getName()).collect(Collectors.toList());
+        UserDto user = findByUsername(username);
+
+        for (String role : roleNames) {
+            RoleModel roleExist = roleRepository.findByName(Cargos.valueOf(role)).get();
+            user.getRoles().remove(new RoleDto(roleExist));
+        }
+        
+        userRepository.save(new UserModel(user));
+    }
 }

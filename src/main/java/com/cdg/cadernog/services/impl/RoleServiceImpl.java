@@ -13,7 +13,7 @@ import com.cdg.cadernog.repositories.RoleRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.RoleService;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
