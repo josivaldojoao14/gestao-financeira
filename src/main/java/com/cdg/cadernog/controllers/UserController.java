@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,36 +40,35 @@ public class UserController {
     @Autowired
     private JWTGenerator jwtGenerator;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping(value = "/users")
     public ResponseEntity<List<?>> getAll() {
         List<UserDto> users = userServiceImpl.findAll();
         return ResponseEntity.ok().body(users);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping(value = "/user/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         UserDto user = userServiceImpl.findById(id);
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping(value = "/auth/user/register")
-    public ResponseEntity<?> save(@RequestBody UserDto user) {
-        UserDto newUser = userServiceImpl.save(user);
-        return ResponseEntity.ok().body(newUser);
-    }
-
+    @PreAuthorize("hasRole('USER')")
     @PutMapping(value = "/user/{id}")
     public ResponseEntity<?> update(@RequestBody UserDto user, @PathVariable Long id) {
         UserDto newUser = userServiceImpl.update(id, user);
         return ResponseEntity.ok().body(newUser);
     }
 
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping(value = "/user/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         userServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
     
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping(value = "/user/findByUsername")
     public ResponseEntity<?> findByUsername(@RequestParam(value = "username") String username) {
         username = URL.decodeParam(username);
@@ -76,16 +76,24 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping(value = "/user/addRoleToUser")
     public ResponseEntity<?> addRoleToUser(@RequestBody AddRoleToUserForm form) {
         userServiceImpl.addRoleToUser(form.getRoleName(), form.getUserName());
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping(value = "/user/revokeRoleFromUser")
     public ResponseEntity<?> revokeRoleFromUser(@RequestBody RolesToRevokeForm form) {
         userServiceImpl.revokeRoleFromUser(form.getRoleName(), form.getUserName());
         return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping(value = "/auth/user/register")
+    public ResponseEntity<?> save(@RequestBody UserDto user) {
+        UserDto newUser = userServiceImpl.save(user);
+        return ResponseEntity.ok().body(newUser);
     }
 
     @PostMapping(value = "/auth/user/login")

@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 public class UserModel implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     
     private String fullName;
     private String phone;
