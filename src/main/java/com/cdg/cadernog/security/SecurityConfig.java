@@ -33,7 +33,7 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests()
             .antMatchers("/h2-console/**").permitAll()
-            .antMatchers("/caderno/auth/user/**").permitAll().anyRequest().authenticated()
+            .antMatchers("/caderno/auth/user/**").permitAll()
             .and()
             .httpBasic();
 

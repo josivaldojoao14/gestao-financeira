@@ -16,9 +16,9 @@ import com.cdg.cadernog.enums.FormasDePagamento;
 import com.cdg.cadernog.models.FormaDePagamentoModel;
 import com.cdg.cadernog.models.ReceitaModel;
 import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
-import com.cdg.cadernog.repositories.CategoriaReceitaRepository;
 import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
 import com.cdg.cadernog.repositories.ReceitaRepository;
+import com.cdg.cadernog.repositories.categorias.CategoriaReceitaRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.ReceitaService;
 
@@ -92,12 +92,37 @@ public class ReceitaServiceImpl implements ReceitaService {
         receitaRepository.delete(new ReceitaModel(receita));
     }
 
-    // @Override
-    // public SituacaoMensalDto sumByPeriod(int year, int month) {
-    //     float total = receitaRepository.sumByPeriod(year, month);
-    //     SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Receita", total);
-    //     return situacao;
-    // }
+    @Override
+    public SituacaoMensalDto getMonthlyExpense(int year, int month) {
+        float total = receitaRepository.monthlyTotal(year, month);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(month, null, null, total);
+        return situacao;
+    }
+
+    @Override
+    public SituacaoMensalDto getAnnualExpense(int year) {
+        float total = receitaRepository.annualTotal(year);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(null, year, null, total);
+        return situacao;
+    }
+
+    @Override
+    public List<SituacaoMensalDto> getSummaryOfPeriod(int year, int month) {
+        List<ReceitaModel> receitas = receitaRepository.findAllByPeriod(year, month);
+
+        List<SituacaoMensalDto> transform = receitas.stream()
+                .collect(Collectors.groupingBy(x -> x.getCategoria()))
+                .entrySet().stream()
+                .map(e -> e.getValue().stream()
+                        .reduce((f1, f2) -> new ReceitaModel(null, f1.getTitle(), f1.getDescription(),
+                                f1.getCreated_at(), f1.getUpdated_at(),
+                                f1.getValue() + f2.getValue(),
+                                f1.getCategoria(), f1.getFormaDePagamento())))
+                .map(f -> new SituacaoMensalDto(f.get()))
+                .collect(Collectors.toList());
+
+        return transform;
+    }
 
     private FormaDePagamentoModel findPagamento(ReceitaDto receitaDto) {
         FormaDePagamentoModel fpag = formaDePagamentoRepository

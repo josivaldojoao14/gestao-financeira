@@ -54,9 +54,21 @@ public class DespesaController {
         return ResponseEntity.noContent().build();
     }
 
-    // @GetMapping(value = "/despesa/{year}/{month}")
-    // public ResponseEntity<?> sumByPeriod(@PathVariable int year, @PathVariable int month) {
-    //     SituacaoMensalDto total = despesaServiceImpl.sumByPeriod(year, month);
-    //     return ResponseEntity.ok().body(total);
-    // }
+    @GetMapping(value = "/despesa/monthlyExpense/{year}/{month}")
+    public ResponseEntity<?> getMonthlyExpense(@PathVariable int year, @PathVariable int month) {
+        SituacaoMensalDto total = despesaServiceImpl.getMonthlyExpense(year, month);
+        return ResponseEntity.ok().body(total);
+    }
+
+    @GetMapping(value = "/despesa/annualExpense/{year}")
+    public ResponseEntity<?> getAnnualExpense(@PathVariable int year) {
+        SituacaoMensalDto total = despesaServiceImpl.getAnnualExpense(year);
+        return ResponseEntity.ok().body(total);
+    }
+
+    @GetMapping(value = "/despesa/summary/{year}/{month}")
+    public ResponseEntity<?> getSummaryOfPeriod(@PathVariable int year, @PathVariable int month) {
+        List<SituacaoMensalDto> teste = despesaServiceImpl.getSummaryOfPeriod(year, month);
+        return ResponseEntity.ok().body(teste);
+    }
 }

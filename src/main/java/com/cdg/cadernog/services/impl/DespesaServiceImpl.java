@@ -16,9 +16,9 @@ import com.cdg.cadernog.enums.FormasDePagamento;
 import com.cdg.cadernog.models.DespesaModel;
 import com.cdg.cadernog.models.FormaDePagamentoModel;
 import com.cdg.cadernog.models.categorias.CategoriaDespesaModel;
-import com.cdg.cadernog.repositories.CategoriaDespesaRepository;
 import com.cdg.cadernog.repositories.DespesaRepository;
 import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
+import com.cdg.cadernog.repositories.categorias.CategoriaDespesaRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.DespesaService;
 
@@ -92,12 +92,36 @@ public class DespesaServiceImpl implements DespesaService {
         despesaRepository.delete(new DespesaModel(despesa));
     }
 
-    // @Override
-    // public SituacaoMensalDto sumByPeriod(int year, int month) {
-    //     float total = despesaRepository.sumByPeriod(year, month);
-    //     SituacaoMensalDto situacao = new SituacaoMensalDto(month, year, "Despesa", total);
-    //     return situacao;
-    // }
+    @Override
+    public SituacaoMensalDto getMonthlyExpense(int year, int month) {
+        float total = despesaRepository.monthlyTotal(year, month);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(month, null, null, total);
+        return situacao;
+    }
+
+    @Override
+    public SituacaoMensalDto getAnnualExpense(int year) {
+        float total = despesaRepository.annualTotal(year);
+        SituacaoMensalDto situacao = new SituacaoMensalDto(null, year, null, total);
+        return situacao;
+    }
+
+    @Override
+    public List<SituacaoMensalDto> getSummaryOfPeriod(int year, int month) {
+        List<DespesaModel> despesas = despesaRepository.findAllByPeriod(year, month);
+
+        List<SituacaoMensalDto> transform = despesas.stream()
+            .collect(Collectors.groupingBy(x -> x.getCategoria()))
+            .entrySet().stream()
+            .map(e -> e.getValue().stream().reduce((f1, f2) -> 
+                new DespesaModel(null, f1.getTitle(), f1.getDescription(), f1.getCreated_at(), f1.getUpdated_at(), 
+                f1.getValue() + f2.getValue(), 
+                f1.getCategoria(), f1.getFormaDePagamento())))
+            .map(f -> new SituacaoMensalDto(f.get()))
+            .collect(Collectors.toList());
+
+        return transform;
+    }
 
     private FormaDePagamentoModel findPagamento(DespesaDto despesaDto){
         FormaDePagamentoModel fpag = formaDePagamentoRepository
@@ -112,4 +136,6 @@ public class DespesaServiceImpl implements DespesaService {
             .orElseThrow(() -> new ObjectNotFoundException("Nenhuma categoria de despesa encontrada"));
         return cat;
     }
+
+    
 }

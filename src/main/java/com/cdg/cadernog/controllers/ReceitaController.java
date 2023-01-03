@@ -54,9 +54,21 @@ public class ReceitaController {
         return ResponseEntity.noContent().build();
     }
 
-    // @GetMapping(value = "/receita/{year}/{month}")
-    // public ResponseEntity<?> sumByPeriod(@PathVariable int year, @PathVariable int month) {
-    //     SituacaoMensalDto total = receitaServiceImpl.sumByPeriod(year, month);
-    //     return ResponseEntity.ok().body(total);
-    // }
+    @GetMapping(value = "/receita/monthlyExpense/{year}/{month}")
+    public ResponseEntity<?> getMonthlyExpense(@PathVariable int year, @PathVariable int month) {
+        SituacaoMensalDto total = receitaServiceImpl.getMonthlyExpense(year, month);
+        return ResponseEntity.ok().body(total);
+    }
+
+    @GetMapping(value = "/receita/annualExpense/{year}")
+    public ResponseEntity<?> getAnnualExpense(@PathVariable int year) {
+        SituacaoMensalDto total = receitaServiceImpl.getAnnualExpense(year);
+        return ResponseEntity.ok().body(total);
+    }
+
+    @GetMapping(value = "/receita/summary/{year}/{month}")
+    public ResponseEntity<?> getSummaryOfPeriod(@PathVariable int year, @PathVariable int month) {
+        List<SituacaoMensalDto> teste = receitaServiceImpl.getSummaryOfPeriod(year, month);
+        return ResponseEntity.ok().body(teste);
+    }
 }

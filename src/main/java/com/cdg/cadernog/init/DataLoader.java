@@ -14,10 +14,10 @@ import com.cdg.cadernog.models.FormaDePagamentoModel;
 import com.cdg.cadernog.models.RoleModel;
 import com.cdg.cadernog.models.categorias.CategoriaDespesaModel;
 import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
-import com.cdg.cadernog.repositories.CategoriaReceitaRepository;
-import com.cdg.cadernog.repositories.CategoriaDespesaRepository;
 import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
 import com.cdg.cadernog.repositories.RoleRepository;
+import com.cdg.cadernog.repositories.categorias.CategoriaDespesaRepository;
+import com.cdg.cadernog.repositories.categorias.CategoriaReceitaRepository;
 
 @Configuration
 public class DataLoader implements CommandLineRunner {

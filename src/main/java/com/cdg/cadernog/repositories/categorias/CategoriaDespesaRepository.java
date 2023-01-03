@@ -1,4 +1,4 @@
-package com.cdg.cadernog.repositories;
+package com.cdg.cadernog.repositories.categorias;
 
 import java.util.Optional;
 
