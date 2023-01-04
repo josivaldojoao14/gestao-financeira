@@ -44,13 +44,15 @@ public class DespesaModel {
     @Column(name = "valor")
     private float value;
 
-    //@Column(name = "categoria")
     @ManyToOne
     private CategoriaDespesaModel categoria;
 
-    //@Column(name = "forma_de_recebimento")
     @ManyToOne
     private FormaDePagamentoModel formaDePagamento;
+
+    @ManyToOne
+    private UserModel user;
+
 
     // dto to model
     public DespesaModel(DespesaDto obj) {
@@ -63,5 +65,4 @@ public class DespesaModel {
         categoria = new CategoriaDespesaModel(null, CategoriasDespesa.valueOf(obj.getCategoriaDeDespesa()));
         formaDePagamento = new FormaDePagamentoModel(null, FormasDePagamento.valueOf(obj.getFormaDePagamento()));
     }
- 
 }

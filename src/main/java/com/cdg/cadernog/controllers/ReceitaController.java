@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,20 +39,24 @@ public class ReceitaController {
     }
 
     @PostMapping(value = "/receita")
-    public ResponseEntity<?> save(@RequestBody ReceitaDto receita) {
+    public ResponseEntity<?> save(@RequestBody ReceitaDto receita, Authentication authentication) {
+        receita.setUserName(extractUser(authentication));
         ReceitaDto newReceita = receitaServiceImpl.save(receita);
         return ResponseEntity.ok().body(newReceita);
     }
 
     @PutMapping(value = "/receita/{id}")
-    public ResponseEntity<?> update(@RequestBody ReceitaDto receita, @PathVariable Long id) {
+    public ResponseEntity<?> update(@RequestBody ReceitaDto receita, @PathVariable Long id, Authentication authentication) {
+        receita.setUserName(extractUser(authentication));
         ReceitaDto newReceita = receitaServiceImpl.update(id, receita);
         return ResponseEntity.ok().body(newReceita);
     }
 
     @DeleteMapping(value = "/receita/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        receitaServiceImpl.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id, Authentication authentication) {
+        ReceitaDto receita = receitaServiceImpl.findById(id);
+        receita.setUserName(extractUser(authentication));
+        receitaServiceImpl.delete(receita);
         return ResponseEntity.noContent().build();
     }
 
@@ -70,5 +76,10 @@ public class ReceitaController {
     public ResponseEntity<?> getSummaryOfPeriod(@PathVariable int year, @PathVariable int month) {
         List<SituacaoMensalDto> teste = receitaServiceImpl.getSummaryOfPeriod(year, month);
         return ResponseEntity.ok().body(teste);
+    }
+
+    private String extractUser(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return userDetails.getUsername();
     }
 }

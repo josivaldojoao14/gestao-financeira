@@ -18,6 +18,7 @@ import com.cdg.cadernog.models.ReceitaModel;
 import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
 import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
 import com.cdg.cadernog.repositories.ReceitaRepository;
+import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.repositories.categorias.CategoriaReceitaRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.ReceitaService;
@@ -37,6 +38,9 @@ public class ReceitaServiceImpl implements ReceitaService {
 
     @Autowired
     private final FormaDePagamentoRepository formaDePagamentoRepository;
+
+    @Autowired
+    private final UserRepository userRepository;
 
     @Override
     public List<ReceitaDto> findAll() {
@@ -60,6 +64,7 @@ public class ReceitaServiceImpl implements ReceitaService {
         ReceitaModel newReceita = new ReceitaModel();
         BeanUtils.copyProperties(receitaDto, newReceita);
 
+        newReceita.setUser((userRepository.findByUsername(receitaDto.getUserName()).get()));
         newReceita.setCategoria(cat);
         newReceita.setFormaDePagamento(fpag);
         newReceita.setCreated_at(Instant.parse(receitaDto.getCreated_at()));
@@ -78,6 +83,7 @@ public class ReceitaServiceImpl implements ReceitaService {
         BeanUtils.copyProperties(receitaDto, receitaToUpdate);
 
         receitaToUpdate.setId(id);
+        receitaToUpdate.setUser((userRepository.findByUsername(receitaDto.getUserName()).get()));
         receitaToUpdate.setCategoria(cat);
         receitaToUpdate.setFormaDePagamento(fpag);
         receitaToUpdate.setUpdated_at(Instant.now());
@@ -87,9 +93,10 @@ public class ReceitaServiceImpl implements ReceitaService {
     }
 
     @Override
-    public void deleteById(long id) {
-        ReceitaDto receita = findById(id);
-        receitaRepository.delete(new ReceitaModel(receita));
+    public void delete(ReceitaDto receita) {
+        ReceitaModel receitaToRemove = new ReceitaModel(findById(receita.getId()));
+        receitaToRemove.setUser(userRepository.findByUsername(receita.getUserName()).get());
+        receitaRepository.delete(receitaToRemove);
     }
 
     @Override
@@ -117,7 +124,7 @@ public class ReceitaServiceImpl implements ReceitaService {
                         .reduce((f1, f2) -> new ReceitaModel(null, f1.getTitle(), f1.getDescription(),
                                 f1.getCreated_at(), f1.getUpdated_at(),
                                 f1.getValue() + f2.getValue(),
-                                f1.getCategoria(), f1.getFormaDePagamento())))
+                                f1.getCategoria(), f1.getFormaDePagamento(), f1.getUser())))
                 .map(f -> new SituacaoMensalDto(f.get()))
                 .collect(Collectors.toList());
 

@@ -5,6 +5,7 @@ import java.time.Instant;
 import javax.validation.constraints.NotEmpty;
 
 import com.cdg.cadernog.models.ReceitaModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,9 @@ public class ReceitaDto {
     private String formaDePagamento;
     private String created_at;
     private Instant updated_at;
+
+    @JsonIgnore
+    private String userName;
 
     // model to dto
     public ReceitaDto(ReceitaModel obj) {

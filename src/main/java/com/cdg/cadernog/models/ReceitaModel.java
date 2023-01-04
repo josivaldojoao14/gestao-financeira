@@ -44,13 +44,14 @@ public class ReceitaModel {
     @Column(name = "valor")
     private float value;
 
-    //@Column(name = "categoria")
     @ManyToOne
     private CategoriaReceitaModel categoria;
 
-    //@Column(name = "forma_de_pagamento")
     @ManyToOne
     private FormaDePagamentoModel formaDePagamento;
+
+    @ManyToOne
+    private UserModel user;
 
     // dto to model
     public ReceitaModel(ReceitaDto obj) {

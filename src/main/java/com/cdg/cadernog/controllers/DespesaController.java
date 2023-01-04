@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,7 @@ public class DespesaController {
     private DespesaServiceImpl despesaServiceImpl;
 
     @GetMapping(value = "/despesas")
-    public ResponseEntity<List<?>> getAll() {
+    public ResponseEntity<List<?>> getAll(Authentication authentication) {
         List<DespesaDto> despesas = despesaServiceImpl.findAll();
         return ResponseEntity.ok().body(despesas);
     }
@@ -37,20 +39,24 @@ public class DespesaController {
     }
     
     @PostMapping(value = "/despesa")
-    public ResponseEntity<?> save(@RequestBody DespesaDto despesa) {
+    public ResponseEntity<?> save(@RequestBody DespesaDto despesa, Authentication authentication) {
+        despesa.setUserName(extractUser(authentication));
         DespesaDto newDespesa = despesaServiceImpl.save(despesa);
         return ResponseEntity.ok().body(newDespesa);
     }
 
     @PutMapping(value = "/despesa/{id}")
-    public ResponseEntity<?> update(@RequestBody DespesaDto despesa, @PathVariable Long id) {
+    public ResponseEntity<?> update(@RequestBody DespesaDto despesa, @PathVariable Long id, Authentication authentication) {
+        despesa.setUserName(extractUser(authentication));
         DespesaDto newDespesa = despesaServiceImpl.update(id, despesa);
         return ResponseEntity.ok().body(newDespesa);
     }
 
     @DeleteMapping(value = "/despesa/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        despesaServiceImpl.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id, Authentication authentication) {
+        DespesaDto despesa = despesaServiceImpl.findById(id); 
+        despesa.setUserName(extractUser(authentication));
+        despesaServiceImpl.delete(despesa);
         return ResponseEntity.noContent().build();
     }
 
@@ -71,4 +77,10 @@ public class DespesaController {
         List<SituacaoMensalDto> teste = despesaServiceImpl.getSummaryOfPeriod(year, month);
         return ResponseEntity.ok().body(teste);
     }
+
+    private String extractUser(Authentication authentication){
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return userDetails.getUsername();
+    }
+
 }

@@ -14,7 +14,7 @@ public interface DespesaService {
     
     DespesaDto update(long id, DespesaDto despesaDto);
 
-    void deleteById(long id);
+    void delete(DespesaDto despesaDto);
 
     SituacaoMensalDto getMonthlyExpense(int year, int month);
 
