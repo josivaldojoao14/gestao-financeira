@@ -40,21 +40,21 @@ public class RoleController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping(value = "/role")
     public ResponseEntity<?> save(@RequestBody RoleDto role) {
-        RoleDto newRole = roleServiceImpl.save(role);
-        return ResponseEntity.ok().body(newRole);
+        roleServiceImpl.save(role);
+        return ResponseEntity.ok().body("Role criada com sucesso!");
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PutMapping(value = "/role/{id}")
     public ResponseEntity<?> update(@RequestBody RoleDto role, @PathVariable Long id) {
-        RoleDto newRole = roleServiceImpl.update(id, role);
-        return ResponseEntity.ok().body(newRole);
+        roleServiceImpl.update(id, role);
+        return ResponseEntity.ok().body("Role atualizada com sucesso!");
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping(value = "/role/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         roleServiceImpl.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Role removida com sucesso!");
     }
 }

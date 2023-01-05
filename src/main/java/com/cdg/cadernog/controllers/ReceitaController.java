@@ -41,15 +41,15 @@ public class ReceitaController {
     @PostMapping(value = "/receita")
     public ResponseEntity<?> save(@RequestBody ReceitaDto receita, Authentication authentication) {
         receita.setUserName(extractUser(authentication));
-        ReceitaDto newReceita = receitaServiceImpl.save(receita);
-        return ResponseEntity.ok().body(newReceita);
+        receitaServiceImpl.save(receita);
+        return ResponseEntity.ok().body("Receita criada com sucesso!");
     }
 
     @PutMapping(value = "/receita/{id}")
     public ResponseEntity<?> update(@RequestBody ReceitaDto receita, @PathVariable Long id, Authentication authentication) {
         receita.setUserName(extractUser(authentication));
-        ReceitaDto newReceita = receitaServiceImpl.update(id, receita);
-        return ResponseEntity.ok().body(newReceita);
+        receitaServiceImpl.update(id, receita);
+        return ResponseEntity.ok().body("Receita atualizada com sucesso!");
     }
 
     @DeleteMapping(value = "/receita/{id}")
@@ -57,7 +57,7 @@ public class ReceitaController {
         ReceitaDto receita = receitaServiceImpl.findById(id);
         receita.setUserName(extractUser(authentication));
         receitaServiceImpl.delete(receita);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Receita removida com sucesso!");
     }
 
     @GetMapping(value = "/receita/monthlyExpense/{year}/{month}")

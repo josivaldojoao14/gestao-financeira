@@ -27,7 +27,7 @@ public class DespesaController {
     private DespesaServiceImpl despesaServiceImpl;
 
     @GetMapping(value = "/despesas")
-    public ResponseEntity<List<?>> getAll(Authentication authentication) {
+    public ResponseEntity<List<?>> getAll() {
         List<DespesaDto> despesas = despesaServiceImpl.findAll();
         return ResponseEntity.ok().body(despesas);
     }
@@ -37,27 +37,28 @@ public class DespesaController {
         DespesaDto despesa = despesaServiceImpl.findById(id);
         return ResponseEntity.ok().body(despesa);
     }
-    
+
     @PostMapping(value = "/despesa")
     public ResponseEntity<?> save(@RequestBody DespesaDto despesa, Authentication authentication) {
         despesa.setUserName(extractUser(authentication));
-        DespesaDto newDespesa = despesaServiceImpl.save(despesa);
-        return ResponseEntity.ok().body(newDespesa);
+        despesaServiceImpl.save(despesa);
+        return ResponseEntity.ok().body("Despesa criada com sucesso!");
     }
 
     @PutMapping(value = "/despesa/{id}")
-    public ResponseEntity<?> update(@RequestBody DespesaDto despesa, @PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<?> update(@RequestBody DespesaDto despesa, @PathVariable Long id,
+            Authentication authentication) {
         despesa.setUserName(extractUser(authentication));
-        DespesaDto newDespesa = despesaServiceImpl.update(id, despesa);
-        return ResponseEntity.ok().body(newDespesa);
+        despesaServiceImpl.update(id, despesa);
+        return ResponseEntity.ok().body("Despesa atualizada com sucesso!");
     }
 
     @DeleteMapping(value = "/despesa/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, Authentication authentication) {
-        DespesaDto despesa = despesaServiceImpl.findById(id); 
+        DespesaDto despesa = despesaServiceImpl.findById(id);
         despesa.setUserName(extractUser(authentication));
         despesaServiceImpl.delete(despesa);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Despesa removida com sucesso!");
     }
 
     @GetMapping(value = "/despesa/monthlyExpense/{year}/{month}")
@@ -78,7 +79,7 @@ public class DespesaController {
         return ResponseEntity.ok().body(teste);
     }
 
-    private String extractUser(Authentication authentication){
+    private String extractUser(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return userDetails.getUsername();
     }

@@ -79,9 +79,9 @@ public class DataLoader implements CommandLineRunner {
 
         formaDePagamentoRepository.saveAll(Arrays.asList(fPag1, fPag2, fPag3, fPag4, fPag5));
 
-        UserModel userComum = new UserModel(null, "Maria", "986543243", "mariazinha", passwordEncoder.encode("123456senha"), new ArrayList<>());
-        UserModel userAdmin = new UserModel(null, "Joana", "953562353", "joaninha", passwordEncoder.encode("654321senha"), new ArrayList<>());
-        UserModel userSuperAdmin = new UserModel(null, "Carol", "977554433", "carolzinha", passwordEncoder.encode("98765senha"), new ArrayList<>());
+        UserModel userComum = new UserModel(null, "Maria", "986543243", "maria123", passwordEncoder.encode("123456"), new ArrayList<>());
+        UserModel userAdmin = new UserModel(null, "Joana", "953562353", "joana321", passwordEncoder.encode("123456"), new ArrayList<>());
+        UserModel userSuperAdmin = new UserModel(null, "Carol", "977554433", "carol567", passwordEncoder.encode("123456"), new ArrayList<>());
         
         userRepository.saveAll(Arrays.asList(userComum, userAdmin, userSuperAdmin));
 

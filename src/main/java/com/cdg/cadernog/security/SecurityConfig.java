@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,19 +28,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .exceptionHandling()
-            .authenticationEntryPoint(jwtAuthEntryPoint)
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests()
-            .antMatchers("/h2-console/**").permitAll()
-            .antMatchers("/caderno/auth/user/**").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .httpBasic();
+                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthEntryPoint)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeHttpRequests()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/v2/api-docs/").permitAll()
+                .antMatchers("/swagger-ui.html/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/caderno/auth/user/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic();
 
         http.headers().frameOptions().disable();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -58,12 +62,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter(){
+    public JWTAuthenticationFilter jwtAuthenticationFilter() {
         return new JWTAuthenticationFilter();
     }
 
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/swagger-ui.html/**", "/v2/api-docs/**", "/**.html", "/webjars/**",
+                "/swagger-resources/**");
     }
 }

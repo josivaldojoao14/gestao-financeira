@@ -57,15 +57,15 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @PutMapping(value = "/user/{id}")
     public ResponseEntity<?> update(@RequestBody UserDto user, @PathVariable Long id) {
-        UserDto newUser = userServiceImpl.update(id, user);
-        return ResponseEntity.ok().body(newUser);
+        userServiceImpl.update(id, user);
+        return ResponseEntity.ok().body("Cadastro atualizado com sucesso!");
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping(value = "/user/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         userServiceImpl.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Usuário removido com sucesso!");
     }
     
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -80,20 +80,20 @@ public class UserController {
     @PostMapping(value = "/user/addRoleToUser")
     public ResponseEntity<?> addRoleToUser(@RequestBody AddRoleToUserForm form) {
         userServiceImpl.addRoleToUser(form.getRoleName(), form.getUserName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("A permissão foi dada com sucesso!");
     }
 
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping(value = "/user/revokeRoleFromUser")
     public ResponseEntity<?> revokeRoleFromUser(@RequestBody RolesToRevokeForm form) {
         userServiceImpl.revokeRoleFromUser(form.getRoleName(), form.getUserName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("A permissão foi removida com sucesso!");
     }
     
     @PostMapping(value = "/auth/user/register")
     public ResponseEntity<?> save(@RequestBody UserDto user) {
-        UserDto newUser = userServiceImpl.save(user);
-        return ResponseEntity.ok().body(newUser);
+        userServiceImpl.save(user);
+        return ResponseEntity.ok().body("O usuário foi cadastrado com sucesso!");
     }
 
     @PostMapping(value = "/auth/user/login")
