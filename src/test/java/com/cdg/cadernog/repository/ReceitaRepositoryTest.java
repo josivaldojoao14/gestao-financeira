@@ -13,7 +13,7 @@ import com.cdg.cadernog.models.UserModel;
 import com.cdg.cadernog.repositories.UserRepository;
 
 @DataJpaTest
-public class UserRepositoryTest {
+public class ReceitaRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
