@@ -1,4 +1,4 @@
-package com.cdg.cadernog.repository;
+package com.cdg.cadernog.repository.categorias;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
