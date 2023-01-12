@@ -1,4 +1,4 @@
-package com.cdg.cadernog.repository;
+package com.cdg.cadernog.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.cdg.cadernog.enums.Cargos;
 import com.cdg.cadernog.models.RoleModel;
-import com.cdg.cadernog.repositories.RoleRepository;
 
 @DataJpaTest
 public class RoleRepositoryTest {

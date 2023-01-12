@@ -1,4 +1,4 @@
-package com.cdg.cadernog.repository.categorias;
+package com.cdg.cadernog.repositories.categorias;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.cdg.cadernog.enums.CategoriasReceita;
 import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
-import com.cdg.cadernog.repositories.categorias.CategoriaReceitaRepository;
 
 @DataJpaTest
 public class CategoriaReceitaRepositoryTest {

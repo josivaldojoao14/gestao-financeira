@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,23 +37,20 @@ public class ReceitaController {
     }
 
     @PostMapping(value = "/receita")
-    public ResponseEntity<?> save(@RequestBody ReceitaDto receita, Authentication authentication) {
-        receita.setUserName(extractUser(authentication));
+    public ResponseEntity<?> save(@RequestBody ReceitaDto receita) {
         receitaServiceImpl.save(receita);
         return ResponseEntity.ok().body("Receita criada com sucesso!");
     }
 
     @PutMapping(value = "/receita/{id}")
-    public ResponseEntity<?> update(@RequestBody ReceitaDto receita, @PathVariable Long id, Authentication authentication) {
-        receita.setUserName(extractUser(authentication));
+    public ResponseEntity<?> update(@RequestBody ReceitaDto receita, @PathVariable Long id) {
         receitaServiceImpl.update(id, receita);
         return ResponseEntity.ok().body("Receita atualizada com sucesso!");
     }
 
     @DeleteMapping(value = "/receita/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         ReceitaDto receita = receitaServiceImpl.findById(id);
-        receita.setUserName(extractUser(authentication));
         receitaServiceImpl.delete(receita);
         return ResponseEntity.ok().body("Receita removida com sucesso!");
     }
@@ -76,10 +71,5 @@ public class ReceitaController {
     public ResponseEntity<?> getSummaryOfPeriod(@PathVariable int year, @PathVariable int month) {
         List<SituacaoMensalDto> teste = receitaServiceImpl.getSummaryOfPeriod(year, month);
         return ResponseEntity.ok().body(teste);
-    }
-
-    private String extractUser(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userDetails.getUsername();
     }
 }

@@ -1,5 +1,6 @@
 package com.cdg.cadernog.models;
 
+import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.cdg.cadernog.dtos.RoleDto;
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "cargos")
 public class RoleModel implements GrantedAuthority {
 

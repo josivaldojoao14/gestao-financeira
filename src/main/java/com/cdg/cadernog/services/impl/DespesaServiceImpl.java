@@ -18,16 +18,12 @@ import com.cdg.cadernog.models.FormaDePagamentoModel;
 import com.cdg.cadernog.models.categorias.CategoriaDespesaModel;
 import com.cdg.cadernog.repositories.DespesaRepository;
 import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
-import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.repositories.categorias.CategoriaDespesaRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.DespesaService;
 
-import lombok.AllArgsConstructor;
-
 @Service
 @Transactional
-@AllArgsConstructor
 public class DespesaServiceImpl implements DespesaService {
 
     @Autowired
@@ -39,8 +35,12 @@ public class DespesaServiceImpl implements DespesaService {
     @Autowired
     private final FormaDePagamentoRepository formaDePagamentoRepository;
 
-    @Autowired
-    private final UserRepository userRepository;
+    public DespesaServiceImpl(DespesaRepository despesaRepository, CategoriaDespesaRepository categoriaDespesaRepository, 
+        FormaDePagamentoRepository formaDePagamentoRepository) {
+        this.despesaRepository = despesaRepository;
+        this.categoriaDespesaRepository = categoriaDespesaRepository;
+        this.formaDePagamentoRepository = formaDePagamentoRepository;
+    }
 
     @Override
     public List<DespesaDto> findAll() {
@@ -64,7 +64,6 @@ public class DespesaServiceImpl implements DespesaService {
         DespesaModel newDespesa = new DespesaModel();
         BeanUtils.copyProperties(despesaDto, newDespesa);
 
-        newDespesa.setUser((userRepository.findByUsername(despesaDto.getUserName()).get()));
         newDespesa.setCategoria(cat);
         newDespesa.setFormaDePagamento(fpag);
         newDespesa.setCreated_at(Instant.parse(despesaDto.getCreated_at()));
@@ -83,7 +82,6 @@ public class DespesaServiceImpl implements DespesaService {
         BeanUtils.copyProperties(despesaDto, despesaToUpdate);
 
         despesaToUpdate.setId(id);
-        despesaToUpdate.setUser((userRepository.findByUsername(despesaDto.getUserName()).get()));
         despesaToUpdate.setCategoria(cat);
         despesaToUpdate.setFormaDePagamento(fpag);
         despesaToUpdate.setUpdated_at(Instant.now());
@@ -95,7 +93,6 @@ public class DespesaServiceImpl implements DespesaService {
     @Override
     public void delete(DespesaDto despesa) {
         DespesaModel despesaToRemove = new DespesaModel(findById(despesa.getId()));
-        despesaToRemove.setUser(userRepository.findByUsername(despesa.getUserName()).get());
         despesaRepository.delete(despesaToRemove);
     }
 
@@ -123,7 +120,7 @@ public class DespesaServiceImpl implements DespesaService {
             .map(e -> e.getValue().stream().reduce((f1, f2) -> 
                 new DespesaModel(null, f1.getTitle(), f1.getDescription(), f1.getCreated_at(), f1.getUpdated_at(), 
                 f1.getValue() + f2.getValue(), 
-                f1.getCategoria(), f1.getFormaDePagamento(), f1.getUser())))
+                f1.getCategoria(), f1.getFormaDePagamento())))
             .map(f -> new SituacaoMensalDto(f.get()))
             .collect(Collectors.toList());
 

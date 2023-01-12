@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import com.cdg.cadernog.enums.FormasDePagamento;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "formas_pagamento")
 public class FormaDePagamentoModel {
 

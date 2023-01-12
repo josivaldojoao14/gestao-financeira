@@ -21,6 +21,10 @@ public class RoleServiceImpl implements RoleService{
     @Autowired
     private RoleRepository roleRepository;
 
+    public RoleServiceImpl(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
     @Override
     public List<RoleDto> findAll() {
         List<RoleModel> roles = roleRepository.findAll();

@@ -73,9 +73,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             UserModel user = new UserModel();
             BeanUtils.copyProperties(userDto, user);
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-
-            user = userRepository.save(user);
             addRoleToUser(Cargos.ROLE_USER.name(), user.getUsername());
+            user = userRepository.save(user);
+            
             return new UserDto(user);
         }
     }

@@ -1,10 +1,9 @@
-package com.cdg.cadernog.repository;
+package com.cdg.cadernog.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -16,11 +15,7 @@ import com.cdg.cadernog.enums.CategoriasDespesa;
 import com.cdg.cadernog.enums.FormasDePagamento;
 import com.cdg.cadernog.models.DespesaModel;
 import com.cdg.cadernog.models.FormaDePagamentoModel;
-import com.cdg.cadernog.models.UserModel;
 import com.cdg.cadernog.models.categorias.CategoriaDespesaModel;
-import com.cdg.cadernog.repositories.DespesaRepository;
-import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
-import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.repositories.categorias.CategoriaDespesaRepository;
 
 @DataJpaTest
@@ -28,9 +23,6 @@ public class DespesaRepositoryTest {
 
     @Autowired
     private DespesaRepository despesaRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CategoriaDespesaRepository categoriaDespesaRepository;
@@ -48,16 +40,14 @@ public class DespesaRepositoryTest {
         // given
         CategoriaDespesaModel newCat = new CategoriaDespesaModel(null, CategoriasDespesa.FATURA);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaDespesaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         DespesaModel newDespesa = new DespesaModel(
-                null, "title",
-                "description", Instant.now(),
-                null, 50, newCat,
-                newPag, newUser);
+            null, "title",
+            "description", Instant.now(),
+            null, 50, newCat,
+            newPag);
         despesaRepository.save(newDespesa);
 
         // when
@@ -72,16 +62,14 @@ public class DespesaRepositoryTest {
         // given
         CategoriaDespesaModel newCat = new CategoriaDespesaModel(null, CategoriasDespesa.FATURA);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaDespesaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         DespesaModel newDespesa = new DespesaModel(
-                null, "title",
-                "description", Instant.now(),
-                null, 50, newCat,
-                newPag, newUser);
+            null, "title",
+            "description", Instant.now(),
+            null, 50, newCat,
+            newPag);
         despesaRepository.save(newDespesa);
 
         // when
@@ -96,16 +84,14 @@ public class DespesaRepositoryTest {
         // given
         CategoriaDespesaModel newCat = new CategoriaDespesaModel(null, CategoriasDespesa.FATURA);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaDespesaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         DespesaModel newDespesa = new DespesaModel(
-                null, "title",
-                "description", Instant.now(),
-                null, 50, newCat,
-                newPag, newUser);
+            null, "title",
+            "description", Instant.now(),
+            null, 50, newCat,
+            newPag);
         despesaRepository.save(newDespesa);
 
         // when

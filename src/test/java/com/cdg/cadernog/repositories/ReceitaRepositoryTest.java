@@ -1,10 +1,9 @@
-package com.cdg.cadernog.repository;
+package com.cdg.cadernog.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -14,13 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.cdg.cadernog.enums.CategoriasReceita;
 import com.cdg.cadernog.enums.FormasDePagamento;
-import com.cdg.cadernog.models.ReceitaModel;
 import com.cdg.cadernog.models.FormaDePagamentoModel;
-import com.cdg.cadernog.models.UserModel;
+import com.cdg.cadernog.models.ReceitaModel;
 import com.cdg.cadernog.models.categorias.CategoriaReceitaModel;
-import com.cdg.cadernog.repositories.ReceitaRepository;
-import com.cdg.cadernog.repositories.FormaDePagamentoRepository;
-import com.cdg.cadernog.repositories.UserRepository;
 import com.cdg.cadernog.repositories.categorias.CategoriaReceitaRepository;
 
 @DataJpaTest
@@ -28,9 +23,6 @@ public class ReceitaRepositoryTest {
 
     @Autowired
     private ReceitaRepository receitaRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private CategoriaReceitaRepository categoriaReceitaRepository;
@@ -48,16 +40,14 @@ public class ReceitaRepositoryTest {
         // given
         CategoriaReceitaModel newCat = new CategoriaReceitaModel(null, CategoriasReceita.SALARIO);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaReceitaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         ReceitaModel newReceita = new ReceitaModel(
             null, "title",
             "description", Instant.now(),
             null, 50, newCat,
-            newPag, newUser);
+            newPag);
         receitaRepository.save(newReceita);
 
         // when
@@ -72,16 +62,14 @@ public class ReceitaRepositoryTest {
         // given
         CategoriaReceitaModel newCat = new CategoriaReceitaModel(null, CategoriasReceita.ALUGUEL);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaReceitaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         ReceitaModel newReceita = new ReceitaModel(
             null, "title",
             "description", Instant.now(),
             null, 50, newCat,
-            newPag, newUser);
+            newPag);
         receitaRepository.save(newReceita);
 
         // when
@@ -96,16 +84,14 @@ public class ReceitaRepositoryTest {
         // given
         CategoriaReceitaModel newCat = new CategoriaReceitaModel(null, CategoriasReceita.VENDA);
         FormaDePagamentoModel newPag = new FormaDePagamentoModel(null, FormasDePagamento.DINHEIRO);
-        UserModel newUser = new UserModel(null, "Usuario", "954235452", "usuario321", "senha321", new ArrayList<>());
         categoriaReceitaRepository.save(newCat);
         formaDePagamentoRepository.save(newPag);
-        userRepository.save(newUser);
 
         ReceitaModel newReceita = new ReceitaModel(
             null, "title",
             "description", Instant.now(),
             null, 50, newCat,
-            newPag, newUser);
+            newPag);
         receitaRepository.save(newReceita);
 
         // when

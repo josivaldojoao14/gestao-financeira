@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "despesas")
 public class DespesaModel {
 
@@ -49,10 +51,6 @@ public class DespesaModel {
 
     @ManyToOne
     private FormaDePagamentoModel formaDePagamento;
-
-    @ManyToOne
-    private UserModel user;
-
 
     // dto to model
     public DespesaModel(DespesaDto obj) {
