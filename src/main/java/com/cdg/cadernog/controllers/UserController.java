@@ -33,6 +33,7 @@ import com.cdg.cadernog.util.URL;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/caderno")
 public class UserController {
+
     @Autowired
     private UserServiceImpl userServiceImpl;
     @Autowired
@@ -90,12 +91,6 @@ public class UserController {
         return ResponseEntity.ok().body("A permissão foi removida com sucesso!");
     }
     
-    @PostMapping(value = "/auth/user/register")
-    public ResponseEntity<?> save(@RequestBody UserDto user) {
-        userServiceImpl.save(user);
-        return ResponseEntity.ok().body("O usuário foi cadastrado com sucesso!");
-    }
-
     @PostMapping(value = "/auth/user/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
         Authentication authentication = authenticationManager.authenticate(
@@ -107,5 +102,11 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
         return ResponseEntity.ok().body(new AuthResponseDto(token));
+    }
+
+    @PostMapping(value = "/auth/user/register")
+    public ResponseEntity<?> save(@RequestBody UserDto user) {
+        userServiceImpl.save(user);
+        return ResponseEntity.ok().body("O usuário foi cadastrado com sucesso!");
     }
 }

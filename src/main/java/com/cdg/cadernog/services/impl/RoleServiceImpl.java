@@ -3,7 +3,8 @@ package com.cdg.cadernog.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,6 @@ import com.cdg.cadernog.models.RoleModel;
 import com.cdg.cadernog.repositories.RoleRepository;
 import com.cdg.cadernog.services.exceptions.ObjectNotFoundException;
 import com.cdg.cadernog.services.interfaces.RoleService;
-
-import javax.transaction.Transactional;
 
 @Service
 @Transactional
@@ -42,7 +41,7 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public RoleDto save(RoleDto roleDto) {
         RoleModel newRole = new RoleModel();
-        BeanUtils.copyProperties(roleDto, newRole);
+        newRole.setName(roleDto.getName());
         newRole = roleRepository.save(newRole);
         return new RoleDto(newRole);
     }
@@ -51,7 +50,7 @@ public class RoleServiceImpl implements RoleService{
     public RoleDto update(long id, RoleDto roleDto) {
         RoleDto role = findById(id);
         RoleModel roleToUpdate = new RoleModel(role);
-        BeanUtils.copyProperties(roleDto, roleToUpdate);
+        roleToUpdate.setName(roleDto.getName());
 
         roleToUpdate.setId(id);
         roleToUpdate = roleRepository.save(roleToUpdate);

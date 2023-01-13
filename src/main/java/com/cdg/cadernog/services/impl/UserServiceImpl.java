@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             UserModel user = new UserModel();
             BeanUtils.copyProperties(userDto, user);
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-            addRoleToUser(Cargos.ROLE_USER.name(), user.getUsername());
+            user.getRoles().add(roleRepository.findByName(Cargos.ROLE_USER).get());
             user = userRepository.save(user);
             
             return new UserDto(user);
@@ -129,7 +129,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         for (String role : roleNames) {
             RoleModel roleExist = roleRepository.findByName(Cargos.valueOf(role))
                 .orElseThrow(() -> new ObjectNotFoundException("Cargo nao encontrado"));
-                   
             user.getRoles().remove(new RoleDto(roleExist));
         }
         
